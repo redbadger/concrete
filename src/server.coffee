@@ -4,12 +4,11 @@ fs = require 'fs'
 path = require 'path'
 runner = require './runner'
 jobs = require './jobs'
-git = require './git'
 
 authorize = (user, pass) ->
-    user == git.user and pass == git.pass
+    user == config.auth.user and pass == config.auth.pass
 
-if git.user and git.pass
+if config.auth and config.auth.user and config.auth.pass
     app = module.exports = express(express.basicAuth(authorize))
 else
     app = module.exports = express()

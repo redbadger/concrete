@@ -44,6 +44,11 @@ if argv._.length == 0
 
 # start server command
 startServer = ->
+    try
+      config = require './concrete.yml'
+    catch e
+      console.log 'concrete.yml in the git project root does not exist or is invalid.'
+    
     # start the server
     server = require '../lib/server'
     server.listen argv.p, argv.h

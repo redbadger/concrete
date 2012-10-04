@@ -53,16 +53,16 @@ runNextJob = ->
                     runNextJob()
 
 runTask = (next)->
-    jobs.updateLog jobs.current, "Executing '#{git.runner}'"
-    exec git.runner,{maxBuffer: 1024*1024}, (error, stdout, stderr)=>
+    jobs.updateLog jobs.current, "Executing '#{config.runner}'"
+    exec config.runner,{maxBuffer: 1024*1024}, (error, stdout, stderr)=>
         if error?
             updateLog error, true, ->
                 updateLog stdout, true, ->
                     updateLog stderr, true, ->
-                        runFile git.failure, next, no
+                        runFile config.failure, next, no
         else
             updateLog stdout, true, ->
-                runFile git.success, next, yes
+                runFile config.success, next, yes
 
 runFile = (file, next, args=null) ->
     jobs.updateLog jobs.current, "Executing #{file}", ->

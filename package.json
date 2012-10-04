@@ -29,7 +29,8 @@
     "stylus": "0.x",
     "jade": "*",
     "mongodb": "0.9.x",
-    "connect-assets": "*"
+    "connect-assets": "*",
+    "js-yaml": "*"
     },
   "engines": {
     "node": ">=0.4.9"
