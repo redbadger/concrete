@@ -1,0 +1,13 @@
+li.job
+  a(href='/job/#{job._id.toString()}')
+    d = new Date(job.addedTime)
+    .time "#{d.toDateString()} #{d.toTimeString()}"
+    .job_id "#{job._id.toString()}"
+    if job.finished
+      if job.failed
+        div.outcome.failure
+          | &#10008;&nbsp;failure
+      else
+        div.outcome.success
+          | &#10003;&nbsp;success
+  .job_container!=job.log

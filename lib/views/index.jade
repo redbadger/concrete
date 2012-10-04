@@ -1,0 +1,33 @@
+!!! 5
+html
+  head
+    meta(charset='utf-8')
+    title 
+      if locals.title
+        | Concrete - #{title}
+      else
+        | Concrete
+
+    script(src='js/jquery-1.6.2.min.js')
+    !=css('app')
+    script(src='js/coffeecup.js')
+    !=js('concrete')
+    script ->
+          "window.baseUrl = '/';"
+  body
+    header
+      hgroup
+        h1 CONCRETE
+        h2.project=project
+        nav
+          form(method='post', action='/')
+            button.build Build
+    #content
+      ul.jobs
+        if jobs.length < 1
+          li.nojob No jobs have been submitted.
+        else
+          for job in jobs
+            include jobPartial
+
+        

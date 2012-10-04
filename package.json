@@ -30,7 +30,7 @@
     "jade": "*",
     "mongodb": "0.9.x",
     "connect-assets": "*"
-  },
+    },
   "engines": {
     "node": ">=0.4.9"
   }

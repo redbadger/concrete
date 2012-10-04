@@ -14,8 +14,6 @@ if git.user and git.pass
 else
     app = module.exports = express()
 
-app.locals.baseUrl = ''
-
 app.configure ->
     app.set "views", __dirname + "/views"
     app.set "view engine", "jade"
@@ -55,11 +53,11 @@ app.get '/job/:id/:attribute', (req, res) ->
 
 app.get '/clear', (req, res) ->
     jobs.clear ->
-        res.redirect '/jobs'
+        res.redirect "/jobs"
 
 app.get '/add', (req, res) ->
     jobs.addJob ->
-        res.redirect '/jobs'
+        res.redirect "/jobs"
 
 app.get '/ping', (req, res) ->
     jobs.getLast (job) ->
@@ -75,4 +73,4 @@ app.post '/', (req, res) ->
             console.log job
             res.json job
         else
-            res.redirect '/'
+            res.redirect "/"
