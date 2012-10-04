@@ -25,10 +25,11 @@
     "colors": "0.6.x",
     "coffee-script": "1.2.x",
     "optimist": "0.3.x",
-    "express": "2.x",
+    "express": "3.x",
     "stylus": "0.x",
-    "coffeekup": "0.3.x",
-    "mongodb": "0.9.x"
+    "jade": "*",
+    "mongodb": "0.9.x",
+    "connect-assets": "*"
   },
   "engines": {
     "node": ">=0.4.9"
