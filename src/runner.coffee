@@ -1,5 +1,6 @@
 # cli colors
 colors = require 'colors'
+_ = require 'underscore'
 git = require './git'
 server = require './server'
 exec = require('child_process').exec
@@ -40,7 +41,7 @@ html = (input) ->
   return "<code><pre><span>#{result.join('')}</span></pre></code>"
 
 
-runner = module.exports =
+runner =
     build: ->
         runNextJob()
 
@@ -53,16 +54,16 @@ runNextJob = ->
                     runNextJob()
 
 runTask = (next)->
-    jobs.updateLog jobs.current, "Executing '#{config.runner}'"
-    exec config.runner,{maxBuffer: 1024*1024}, (error, stdout, stderr)=>
+    jobs.updateLog jobs.current, "Executing '#{@config.runner}'"
+    exec @config.runner,{maxBuffer: 1024*1024}, (error, stdout, stderr)=>
         if error?
             updateLog error, true, ->
                 updateLog stdout, true, ->
                     updateLog stderr, true, ->
-                        runFile config.failure, next, no
+                        runFile @config.failure, next, no
         else
             updateLog stdout, true, ->
-                runFile config.success, next, yes
+                runFile @config.success, next, yes
 
 runFile = (file, next, args=null) ->
     jobs.updateLog jobs.current, "Executing #{file}", ->
@@ -86,3 +87,7 @@ updateLog = (buffer, isError, done) ->
         errorClass = ''
         console.log content
     jobs.updateLog jobs.current, "<span class='output#{errorClass}'>#{content}</span>", done
+
+module.exports = (config) ->
+    console.log "config: " + JSON.stringify(config)
+    _.extend runner, config: config

@@ -30,7 +30,8 @@
     "jade": "*",
     "mongodb": "0.9.x",
     "connect-assets": "*",
-    "js-yaml": "*"
+    "js-yaml": "*",
+    "underscore": "*"
     },
   "engines": {
     "node": ">=0.4.9"

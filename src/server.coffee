@@ -2,16 +2,19 @@ express = require 'express'
 stylus = require 'stylus'
 fs = require 'fs'
 path = require 'path'
-runner = require './runner'
+colors = require 'colors'
 jobs = require './jobs'
+_ = require 'underscore'
+
+app = express()
+
+module.exports = (config) ->
+    _.extend app, 
+      config: config
+      runner: require('./runner')(config)
 
 authorize = (user, pass) ->
-    user == config.auth.user and pass == config.auth.pass
-
-if config.auth and config.auth.user and config.auth.pass
-    app = module.exports = express(express.basicAuth(authorize))
-else
-    app = module.exports = express()
+    user == app.config.auth.user and pass == app.config.auth.pass
 
 app.configure ->
     app.set "views", __dirname + "/views"
@@ -67,7 +70,7 @@ app.get '/ping', (req, res) ->
 
 app.post '/', (req, res) ->
     jobs.addJob (job)->
-        runner.build()
+        app.runner.build()
         if req.xhr
             console.log job
             res.json job

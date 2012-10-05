@@ -1,8 +1,11 @@
+require 'js-yaml'
+
 process.title = 'Concrete'
-version = '0.0.3'
+version = '0.0.4'
 
 # cli colors
 colors = require 'colors'
+path = require 'path'
 
 usage = 'Usage: concrete [-hpv] path_to_git_repo'
 optimist = require 'optimist'
@@ -45,12 +48,15 @@ if argv._.length == 0
 # start server command
 startServer = ->
     try
-      config = require './concrete.yml'
+      config = require path.normalize process.cwd() + '/concrete.yml'
+      console.log "config: " + JSON.stringify(config)
     catch e
-      console.log 'concrete.yml in the git project root does not exist or is invalid.'
-    
-    # start the server
-    server = require '../lib/server'
+      throw e
+      console.log 'Configuration file concrete.yml is invalid or does not exist in the git project root.'.red
+      process.exit 1
+
+    # start the server with the config
+    server = require('../lib/server')(config)
     server.listen argv.p, argv.h
     console.log "Concrete listening on port %d with host %s".green,
         argv.p, argv.h
