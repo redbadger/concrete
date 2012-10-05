@@ -54,16 +54,21 @@ runNextJob = ->
                     runNextJob()
 
 runTask = (next)->
-    jobs.updateLog jobs.current, "Executing '#{@config.runner}'"
-    exec @config.runner,{maxBuffer: 1024*1024}, (error, stdout, stderr)=>
-        if error?
-            updateLog error, true, ->
-                updateLog stdout, true, ->
-                    updateLog stderr, true, ->
-                        runFile @config.failure, next, no
-        else
-            updateLog stdout, true, ->
-                runFile @config.success, next, yes
+    branchConfig = runner.config.branches?[git.branch]
+    if branchConfig
+      jobs.updateLog jobs.current, "Executing '#{branchConfig.runner}'"
+      exec branchConfig.runner,{maxBuffer: 1024*1024}, (error, stdout, stderr)=>
+          if error?
+              updateLog error, true, ->
+                  updateLog stdout, true, ->
+                      updateLog stderr, true, ->
+                          runFile branchConfig.failure, next, no
+          else
+              updateLog stdout, true, ->
+                  runFile branchConfig.success, next, yes
+    else
+      updateLog "No branch configuration was found for branch " + git.branch, true, ->
+          next
 
 runFile = (file, next, args=null) ->
     jobs.updateLog jobs.current, "Executing #{file}", ->
@@ -89,5 +94,4 @@ updateLog = (buffer, isError, done) ->
     jobs.updateLog jobs.current, "<span class='output#{errorClass}'>#{content}</span>", done
 
 module.exports = (config) ->
-    console.log "config: " + JSON.stringify(config)
     _.extend runner, config: config
