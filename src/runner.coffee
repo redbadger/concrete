@@ -1,11 +1,13 @@
 # cli colors
 colors = require 'colors'
+_ = require 'underscore'
 git = require './git'
 server = require './server'
 exec = require('child_process').exec
 mongo = require 'mongodb'
 jobs = require './jobs'
-
+path = require 'path'
+config = require path.normalize process.cwd() + '/concrete.yml'
 
 parseSequence = (input) ->
   length = input.length
@@ -40,7 +42,7 @@ html = (input) ->
   return "<code><pre><span>#{result.join('')}</span></pre></code>"
 
 
-runner = module.exports =
+module.exports = runner =
     build: ->
         runNextJob()
 
@@ -53,16 +55,21 @@ runNextJob = ->
                     runNextJob()
 
 runTask = (next)->
-    jobs.updateLog jobs.current, "Executing '#{git.runner}'"
-    exec git.runner,{maxBuffer: 1024*1024}, (error, stdout, stderr)=>
-        if error?
-            updateLog error, true, ->
-                updateLog stdout, true, ->
-                    updateLog stderr, true, ->
-                        runFile git.failure, next, no
-        else
-            updateLog stdout, true, ->
-                runFile git.success, next, yes
+    branchConfig = config.branches?[git.branch]
+    if branchConfig
+      jobs.updateLog jobs.current, "Executing '#{branchConfig.runner}'"
+      exec branchConfig.runner,{maxBuffer: 1024*1024}, (error, stdout, stderr)=>
+          if error?
+              updateLog error, true, ->
+                  updateLog stdout, true, ->
+                      updateLog stderr, true, ->
+                          runFile branchConfig.failure, next, no
+          else
+              updateLog stdout, true, ->
+                  runFile branchConfig.success, next, yes
+    else
+      updateLog "No branch configuration was found for branch " + git.branch, true, ->
+          next
 
 runFile = (file, next, args=null) ->
     jobs.updateLog jobs.current, "Executing #{file}", ->
