@@ -51,7 +51,6 @@ startServer = ->
       config = require path.normalize process.cwd() + '/concrete.yml'
       console.log "config: " + JSON.stringify(config)
     catch e
-      throw e
       console.log 'Configuration file concrete.yml is invalid or does not exist in the git project root.'.red
       process.exit 1
 
