@@ -5,18 +5,15 @@ path = require 'path'
 colors = require 'colors'
 jobs = require './jobs'
 git = require './git'
+runner = require './runner'
+config = require path.normalize process.cwd() + '/concrete.yml'
 _ = require 'underscore'
 
-app = express()
-
-module.exports = (config) ->
-    _.extend app, 
-      config: config
-      runner: require('./runner')(config)
+module.exports = app = express()
 
 #Not in use
 authorize = (user, pass, next) ->
-    if app.config.concrete.auth.user == user and pass == app.config.concrete.auth.pass
+    if config.concrete.auth.user == user and pass == config.concrete.auth.pass
       next
     else
       next new Error "401"
@@ -76,7 +73,7 @@ app.get '/ping', (req, res) ->
 
 app.post '/', (req, res) ->
     jobs.addJob (job)->
-        app.runner.build()
+        runner.build()
         if req.xhr
             console.log job
             res.json job
@@ -90,7 +87,7 @@ app.post '/hook', (req, res) ->
 
     if req.body.ref and _.last(req.body.ref.split('/')) is git.branch
       jobs.addJob (job)->
-        app.runner.build()
+        runner.build()
         console.log 'GitHub hook triggered a build.'.yellow
         res.send 200
     else

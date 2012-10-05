@@ -6,7 +6,8 @@ server = require './server'
 exec = require('child_process').exec
 mongo = require 'mongodb'
 jobs = require './jobs'
-
+path = require 'path'
+config = require path.normalize process.cwd() + '/concrete.yml'
 
 parseSequence = (input) ->
   length = input.length
@@ -41,7 +42,7 @@ html = (input) ->
   return "<code><pre><span>#{result.join('')}</span></pre></code>"
 
 
-runner =
+module.exports = runner =
     build: ->
         runNextJob()
 
@@ -54,7 +55,7 @@ runNextJob = ->
                     runNextJob()
 
 runTask = (next)->
-    branchConfig = runner.config.branches?[git.branch]
+    branchConfig = config.branches?[git.branch]
     if branchConfig
       jobs.updateLog jobs.current, "Executing '#{branchConfig.runner}'"
       exec branchConfig.runner,{maxBuffer: 1024*1024}, (error, stdout, stderr)=>
@@ -92,6 +93,3 @@ updateLog = (buffer, isError, done) ->
         errorClass = ''
         console.log content
     jobs.updateLog jobs.current, "<span class='output#{errorClass}'>#{content}</span>", done
-
-module.exports = (config) ->
-    _.extend runner, config: config

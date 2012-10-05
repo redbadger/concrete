@@ -55,7 +55,7 @@ startServer = ->
       process.exit 1
 
     # start the server with the config
-    server = require('../lib/server')(config)
+    server = require '../lib/server'
     server.listen argv.p, argv.h
     console.log "Concrete listening on port %d with host %s".green,
         argv.p, argv.h
