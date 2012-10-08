@@ -31,7 +31,8 @@
     "mongodb": "0.9.x",
     "connect-assets": "*",
     "js-yaml": "*",
-    "underscore": "*"
+    "underscore": "*",
+    "forever" : "*"
     },
   "engines": {
     "node": ">=0.4.9"
