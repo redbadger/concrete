@@ -21,13 +21,22 @@ Vagrant::Config.run do |config|
           "install_method" => "package"
         } 
       }
-    end
-  end
 
-  config.vm.define :web do |web_config|
-    web_config.vm.box = "precise64"
-    web_config.vm.box_url = "http://files.vagrantup.com/precise64.box"
-    web_config.vm.network :hostonly, "192.168.50.20"
-    web_config.vm.host_name = "web01.local"
+      #EC2 provisioning
+      require 'json'
+      open('chef/dna.json', 'w') do |f|
+        chef.json[:run_list] = chef.run_list
+        f.write chef.json.to_json
+      end
+      open('chef/run_list', 'w') do |f|
+        run_list = chef.run_list.map{|x|
+          x.gsub('recipe', '').gsub(/(\[|\])/, '').gsub(/::.*$/, '')
+        }.uniq
+
+        run_list.map { |recipe|
+          f.puts "cookbooks/#{recipe}"
+        }
+      end
+    end
   end
 end

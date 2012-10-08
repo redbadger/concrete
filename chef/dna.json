@@ -1,0 +1,1 @@
+{"nodejs":{"install_method":"package"},"run_list":["recipe[ohai]","recipe[apt]","recipe[git]","recipe[nginx]","recipe[nodejs]","recipe[mongodb::10gen_repo]","recipe[mongodb]"]}
